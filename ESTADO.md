@@ -1,19 +1,18 @@
 # Estado — actualizado 2026-11-04
 
-**En curso:** maqueta navegable en `maquette/`. Fases 1 (base) y 2 (organigrama) hechas; esperando la validación visual de Felipe.
-**Funciona y está verificado** (build OK + recorrido Playwright, sin errores de consola):
-- Layout (menú lateral, selector de rol y de año, réinitialiser), tableau de bord por rol.
-- Organigrama 2026: 42 postes, zoom/desplazamiento, plegar ramas, búsqueda, filtro por employeur, «Mon périmètre» para roles restringidos.
-- Ficha de poste: titular, % de dossier, etapa del circuito, salario oculto fuera del perímetro, affecter/libérer (compta/admin).
-- «Préparer 2027»: copia la jerarquía, conserva los CDI y deja el resto à pourvoir.
-- El rol Collaborateur muestra un portal provisional (fase 5). Las demás pantallas muestran «Bientôt» con su fase.
-**Problemas conocidos:** avisos de oxlint menores (sin errores). Al abrir la ficha de un poste del borde derecho, el panel lo tapa (no centra la vista).
-**Próximo paso concreto:** feedback visual de Felipe → fase 3 (postes y personnes).
+**En curso:** maqueta navegable en `maquette/`. Fases 1 (base) y 2 (organigrama) hechas y subidas; esperando la validación visual de Felipe (P-011).
+**Funciona y está verificado** (build OK + recorrido Playwright, 0 errores de consola):
+- Layout, selector de rol (7) y de año, «Réinitialiser la démo», tableau de bord por rol.
+- Organigrama 2026 (42 postes): zoom, plegar, búsqueda, filtro employeur, «Mon périmètre».
+- Ficha de poste: titular, % dossier, etapa del circuito, salario oculto fuera del perímetro, affecter/libérer.
+- «Préparer 2027» (conserva CDI, resto à pourvoir).
+**Problemas conocidos:** al abrir la ficha de un poste en el borde derecho, el panel lo tapa; 3 avisos menores de oxlint.
+**Próximo paso concreto:** feedback visual de Felipe → fase 3 (listas y fichas de Postes y Personnes, «Inviter au portail»).
 **Archivos clave:** `maquette/src/pages/Organigramme.tsx`, `maquette/src/components/PosteDrawer.tsx`, `maquette/src/data/seed.ts`, `maquette/src/roles.ts`, `maquette/src/store.ts`
 
 ## Plan de la maqueta (aprobado 2026-11-04)
-1. Base: menú lateral, selector de rol (Resp. Accueil, Resp. Presse, Comptabilité, Direction, Lecteur Stagiaires, Collaborateur, Admin) y de año; ~3 employeurs, ~8 services, ~40 postes/año, ~35 personnes; botón «Réinitialiser la démo».
-2. Organigramme: árbol, ocupado/vacante, color por employeur, zoom, filtros, ficha de poste, «Préparer 2027 à partir de 2026».
+1. ✅ Base: menú, selector de rol y año, datos ficticios, réinitialiser.
+2. ✅ Organigramme: árbol, ocupado/vacante, color por employeur, zoom, filtros, ficha, «Préparer 2027».
 3. Postes y personnes (listas, fichas, % complétude, «Inviter au portail»).
 4. Circuito de contratos (À corriger, historial) + tableau de bord por rol.
 5. Portail collaborateur (Notes de frais / Congés «Bientôt»).

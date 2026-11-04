@@ -13,3 +13,4 @@
 | P-009 | Maqueta fases 3–7: postes/personnes, circuito, portail, transmissions/BO/rapports, pulido | Claude | 2026-11-04 | abierto |
 | P-010 | Devis y cahier des charges en francés (después de la maqueta) | Felipe | 2026-11-04 | abierto |
 | P-011 | Validar el estilo visual de la maqueta (capturas fases 1–2) | Felipe | 2026-11-04 | abierto |
+| P-012 | Validar la regla de «Préparer l’exercice suivant»: CDI conservados, CDD/stages/prestations à pourvoir | Felipe | 2026-11-04 | abierto |
