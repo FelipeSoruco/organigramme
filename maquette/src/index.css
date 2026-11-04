@@ -1,0 +1,187 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/fraunces';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, serif;
+
+  --color-ivoire: #f7f5f0;
+  --color-papier: #fdfcfa;
+  --color-encre: #17161b;
+  --color-encre-2: #2a2930;
+  --color-gris: #6b6872;
+  --color-gris-clair: #9a96a0;
+  --color-ligne: #e7e3da;
+  --color-ligne-forte: #d6d0c3;
+  --color-or: #b08a3e;
+  --color-or-clair: #c9a45c;
+  --color-or-pale: #f4ecdb;
+  --color-nuit: #141318;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ivoire);
+  color: var(--color-encre);
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Organigramme : connecteurs ---------- */
+.org {
+  --l: var(--color-ligne-forte);
+  --gap: 22px;
+}
+.org ul {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  padding-top: var(--gap);
+  margin: 0;
+  list-style: none;
+}
+.org li {
+  position: relative;
+  padding: var(--gap) 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.org > ul {
+  padding-top: 0;
+}
+.org > ul > li {
+  padding-top: 0;
+}
+.org li::before,
+.org li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  width: 50%;
+  height: var(--gap);
+  border-top: 1.5px solid var(--l);
+}
+.org li::after {
+  right: auto;
+  left: 50%;
+  border-left: 1.5px solid var(--l);
+}
+.org li:only-child::before,
+.org li:only-child::after {
+  display: none;
+}
+.org li:only-child {
+  padding-top: 0;
+}
+.org li:first-child::before,
+.org li:last-child::after {
+  border: 0 none;
+}
+.org li:last-child::before {
+  border-right: 1.5px solid var(--l);
+  border-top-right-radius: 10px;
+}
+.org li:first-child::after {
+  border-top-left-radius: 10px;
+}
+.org ul ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: var(--gap);
+  border-left: 1.5px solid var(--l);
+}
+.org > ul > li::before,
+.org > ul > li::after {
+  display: none;
+}
+
+/* Pile verticale de feuilles sous un parent */
+.org-stack {
+  position: relative;
+  padding-top: 14px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.org-stack::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 28px;
+  height: 14px;
+  border-left: 1.5px solid var(--l);
+}
+.org-stack > div {
+  position: relative;
+  padding: 5px 0 5px 44px;
+}
+.org-stack > div::before {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 0;
+  bottom: 0;
+  border-left: 1.5px solid var(--l);
+}
+.org-stack > div:last-child::before {
+  bottom: 50%;
+  border-bottom-left-radius: 8px;
+}
+.org-stack > div::after {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 50%;
+  width: 16px;
+  border-top: 1.5px solid var(--l);
+}
+.org-stack > div:last-child::after {
+  display: none;
+}
+.org-stack > div:last-child::before {
+  border-bottom: 1.5px solid var(--l);
+  width: 16px;
+}
+
+.grain {
+  background-image: radial-gradient(rgba(23, 22, 27, 0.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.anim-drawer {
+  animation: drawer-in 0.22s ease-out;
+}
+@keyframes fade-up {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.anim-fade {
+  animation: fade-up 0.3s ease-out both;
+}

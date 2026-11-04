@@ -1,10 +1,15 @@
 # Estado — actualizado 2026-11-04
 
-**En curso:** maqueta navegable, fases 1 (base: layout, selector de rol/año, datos ficticios) y 2 (organigrama).
-**Funciona y está verificado:** nada todavía; memoria del proyecto creada.
-**Problemas conocidos:** ninguno conocido.
-**Próximo paso concreto:** construir `maquette/` fases 1–2 y mostrar capturas a Felipe para validar el estilo visual.
-**Archivos clave para continuar:** CLAUDE.md, DECISIONES.md, PENDIENTES.md
+**En curso:** maqueta navegable en `maquette/`. Fases 1 (base) y 2 (organigrama) hechas; esperando la validación visual de Felipe.
+**Funciona y está verificado** (build OK + recorrido Playwright, sin errores de consola):
+- Layout (menú lateral, selector de rol y de año, réinitialiser), tableau de bord por rol.
+- Organigrama 2026: 42 postes, zoom/desplazamiento, plegar ramas, búsqueda, filtro por employeur, «Mon périmètre» para roles restringidos.
+- Ficha de poste: titular, % de dossier, etapa del circuito, salario oculto fuera del perímetro, affecter/libérer (compta/admin).
+- «Préparer 2027»: copia la jerarquía, conserva los CDI y deja el resto à pourvoir.
+- El rol Collaborateur muestra un portal provisional (fase 5). Las demás pantallas muestran «Bientôt» con su fase.
+**Problemas conocidos:** avisos de oxlint menores (sin errores). Al abrir la ficha de un poste del borde derecho, el panel lo tapa (no centra la vista).
+**Próximo paso concreto:** feedback visual de Felipe → fase 3 (postes y personnes).
+**Archivos clave:** `maquette/src/pages/Organigramme.tsx`, `maquette/src/components/PosteDrawer.tsx`, `maquette/src/data/seed.ts`, `maquette/src/roles.ts`, `maquette/src/store.ts`
 
 ## Plan de la maqueta (aprobado 2026-11-04)
 1. Base: menú lateral, selector de rol (Resp. Accueil, Resp. Presse, Comptabilité, Direction, Lecteur Stagiaires, Collaborateur, Admin) y de año; ~3 employeurs, ~8 services, ~40 postes/año, ~35 personnes; botón «Réinitialiser la démo».
