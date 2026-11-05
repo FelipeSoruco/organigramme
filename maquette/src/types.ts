@@ -51,6 +51,29 @@ export interface Poste {
 
 export type PortailStatut = 'non_invite' | 'invite' | 'actif'
 
+/** Informations saisies par la personne dans son portail (toutes fictives dans la maquette). */
+export interface InfosPersonnelles {
+  adresse?: string
+  codePostal?: string
+  dateNaissance?: string
+  lieuNaissance?: string
+  nationalite?: string
+  nir?: string
+  iban?: string
+  urgenceNom?: string
+  urgenceTel?: string
+  tenue?: string
+  /** Photo réduite (data URL), stockée dans le navigateur */
+  photo?: string
+}
+
+export type DocumentId = 'identite' | 'vitale' | 'rib' | 'domicile'
+
+export interface DocumentDepose {
+  fichier: string
+  date: string
+}
+
 export interface Personne {
   id: string
   civilite: 'Mme' | 'M.'
@@ -59,8 +82,11 @@ export interface Personne {
   email: string
   telephone: string
   ville: string
+  /** Calculée à partir des infos et documents (voir data/dossier.ts) */
   completude: number
   portail: PortailStatut
+  infos: InfosPersonnelles
+  documents: Partial<Record<DocumentId, DocumentDepose>>
 }
 
 /** États fixes du circuit (R-003). */
@@ -73,6 +99,15 @@ export type StatutContrat =
   | 'a_corriger'
   | 'refuse'
 
+export interface EvenementContrat {
+  date: string
+  /** Nom de la personne qui agit (ou « Yousign », « Silae », « POSI ») */
+  auteur: string
+  action: string
+  commentaire?: string
+  statut?: StatutContrat
+}
+
 export interface Contrat {
   id: string
   posteId: string
@@ -80,7 +115,11 @@ export interface Contrat {
   statut: StatutContrat
   dateDebut: string
   dateFin: string | null
+  echelonId: string | null
   salaire: number
+  /** Rôle qui a proposé l’embauche : c’est lui qui corrige en cas de retour */
+  proposePar: RoleId
+  historique: EvenementContrat[]
 }
 
 export type RoleId =

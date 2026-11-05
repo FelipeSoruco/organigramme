@@ -13,6 +13,8 @@ export interface Role {
   peutEditer: boolean
   /** Accès à l’Administration (BO) */
   accesAdmin: boolean
+  /** Fiche personne correspondante (pour le portail collaborateur) */
+  personneId?: string
 }
 
 export const ROLES: Role[] = [
@@ -85,6 +87,7 @@ export const ROLES: Role[] = [
     populations: [],
     peutEditer: false,
     accesAdmin: false,
+    personneId: 'p-dupont',
   },
 ]
 
@@ -98,3 +101,10 @@ export function dansPerimetre(role: Role, poste: Poste): boolean {
 }
 
 export const estPerimetreRestreint = (role: Role) => role.services !== null || role.populations !== null
+
+/** Les responsables proposent dans leur service ; la comptabilité et l’administrateur partout. */
+export const peutProposer = (role: Role, poste: Poste) =>
+  role.id === 'compta' || role.id === 'admin' || (role.services !== null && role.services.length > 0 && dansPerimetre(role, poste))
+
+/** Données sensibles (NIR, IBAN) : comptabilité & paie et administrateur uniquement. */
+export const voitDonneesSensibles = (role: Role) => role.id === 'compta' || role.id === 'admin'

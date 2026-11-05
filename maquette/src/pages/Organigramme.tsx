@@ -42,6 +42,7 @@ function Carte({ poste, ctx, variante }: { poste: Poste; ctx: Ctx; variante: 'ra
     <div className="relative" style={{ width: largeur }}>
       <button
         data-carte
+        data-poste={poste.id}
         onClick={() => ctx.ouvrir(poste.id)}
         className={`group relative block w-full overflow-hidden rounded-xl text-left transition duration-200 ${
           racine
@@ -213,6 +214,19 @@ function useToile() {
     },
   }
 
+  /** Décale la toile pour que la carte ne soit pas cachée par la fiche (440 px à droite). */
+  const reveler = (el: Element) => {
+    const c = toile.current
+    if (!c) return
+    const rc = c.getBoundingClientRect()
+    const re = el.getBoundingClientRect()
+    const limite = rc.right - 440 - 32
+    let dx = 0
+    if (re.right > limite) dx = limite - re.right
+    if (re.left + dx < rc.left + 24) dx = rc.left + 24 - re.left
+    if (dx) setVue((v) => ({ ...v, x: v.x + dx }))
+  }
+
   const zoomer = (f: number) => {
     const c = toile.current
     if (!c) return
@@ -224,7 +238,7 @@ function useToile() {
     })
   }
 
-  return { toile, contenu, vue, handlers, ajuster, zoomer }
+  return { toile, contenu, vue, handlers, ajuster, zoomer, reveler }
 }
 
 /* ---------- Page ---------- */
@@ -238,10 +252,10 @@ export function Organigramme() {
   const [recherche, setRecherche] = useState('')
   const [monPerimetre, setMonPerimetre] = useState(false)
   const [preparer, setPreparer] = useState(false)
-  const { toile, contenu, vue, handlers, ajuster, zoomer } = useToile()
+  const { toile, contenu, vue, handlers, ajuster, zoomer, reveler } = useToile()
 
   const personnes = useMemo(() => new Map(lp.map((p) => [p.id, p])), [lp])
-  const contrats = useMemo(() => new Map(lc.map((c) => [c.posteId, c])), [lc])
+  const contrats = useMemo(() => new Map(lc.filter((c) => c.statut !== 'refuse').map((c) => [c.posteId, c])), [lc])
   const enfants = useMemo(() => {
     const m = new Map<string | null, Poste[]>()
     postes.forEach((p) => m.set(p.parentId, [...(m.get(p.parentId) ?? []), p]))
@@ -267,7 +281,11 @@ export function Organigramme() {
       (q !== '' && !correspond(p)) ||
       (monPerimetre && !dansPerimetre(role, p)),
     estSurligne: (p) => q !== '' && correspond(p),
-    ouvrir: setSelection,
+    ouvrir: (id) => {
+      setSelection(id)
+      const el = toile.current?.querySelector(`[data-poste="${id}"]`)
+      if (el) reveler(el)
+    },
     basculer: (id) =>
       setReplies((s) => {
         const n = new Set(s)

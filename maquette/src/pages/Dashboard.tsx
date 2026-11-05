@@ -1,25 +1,33 @@
 import { ArrowRight, ArrowUpRight, Network } from 'lucide-react'
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Shell } from '../components/Layout'
-import { Avatar, PageHeader, StatutBadge, TypeContratBadge, employeur } from '../components/ui'
+import { Avatar, PageHeader, StatutBadge, STATUTS, TypeContratBadge, dateFr, employeur } from '../components/ui'
 import { EMPLOYEURS, SERVICES } from '../data/seed'
 import { dansPerimetre, getRole } from '../roles'
 import { useDemo } from '../store'
 import type { StatutContrat } from '../types'
+import { estATraiter } from '../workflow'
 
-const A_TRAITER: Partial<Record<string, StatutContrat[]>> = {
-  compta: ['soumis', 'a_corriger'],
-  direction: ['valide_compta'],
-}
+const CIRCUIT: StatutContrat[] = ['soumis', 'valide_compta', 'signe_direction', 'a_corriger', 'actif']
 
 export function Dashboard() {
   const { postes: tous, personnes, contrats, annee, role: roleId } = useDemo()
   const role = getRole(roleId)
   const postes = useMemo(() => tous.filter((p) => p.annee === annee && dansPerimetre(role, p)), [tous, annee, role])
   const ids = new Set(postes.map((p) => p.id))
-  const enCours = contrats.filter((c) => ids.has(c.posteId) && c.statut !== 'actif')
-  const aTraiter = A_TRAITER[role.id] ? enCours.filter((c) => A_TRAITER[role.id]!.includes(c.statut)) : enCours
+  const navigate = useNavigate()
+  const duPerimetre = contrats.filter((c) => ids.has(c.posteId))
+  const enCours = duPerimetre.filter((c) => !['actif', 'refuse'].includes(c.statut))
+  const actionnables = enCours.filter((c) => estATraiter(role, c))
+  // Sans action possible (lecture, responsable sans retour), on affiche le suivi de son périmètre.
+  const suivi = actionnables.length === 0
+  const aTraiter = suivi ? enCours : actionnables
+  const activite = duPerimetre
+    .flatMap((c) => c.historique.map((e) => ({ e, c })))
+    .filter(({ e }) => e.auteur !== 'Reprise Organigram')
+    .sort((a, b) => b.e.date.localeCompare(a.e.date))
+    .slice(0, 6)
   const pourvus = postes.filter((p) => p.personneId).length
   const persIds = new Set(postes.map((p) => p.personneId).filter(Boolean))
   const incomplets = personnes.filter((p) => persIds.has(p.id) && p.completude < 100).length
@@ -29,7 +37,9 @@ export function Dashboard() {
   const kpis = [
     { v: postes.length, l: `Postes ${annee}`, s: role.services || role.populations ? 'dans votre périmètre' : 'tous employeurs' },
     { v: `${postes.length ? Math.round((pourvus / postes.length) * 100) : 0} %`, l: 'Taux de pourvoi', s: `${postes.length - pourvus} postes à pourvoir` },
-    { v: aTraiter.length, l: 'Contrats à traiter', s: 'en attente de votre action', accent: true },
+    suivi
+      ? { v: enCours.length, l: 'Contrats en cours', s: 'dans votre périmètre', accent: true }
+      : { v: actionnables.length, l: 'Contrats à traiter', s: 'en attente de votre action', accent: true },
     { v: incomplets, l: 'Dossiers incomplets', s: 'relance automatique par e-mail' },
   ]
 
@@ -65,10 +75,10 @@ export function Dashboard() {
       <div className="mt-6 grid grid-cols-[1.6fr_1fr] gap-6">
         <section className="rounded-2xl border border-ligne bg-white">
           <div className="flex items-center justify-between border-b border-ligne px-6 py-4">
-            <h2 className="font-display text-[19px] font-medium">À traiter</h2>
-            <span className="flex items-center gap-1 text-[12.5px] text-gris">
+            <h2 className="font-display text-[19px] font-medium">{suivi ? 'Contrats en cours' : 'À traiter'}</h2>
+            <Link to="/contrats" className="flex items-center gap-1 text-[12.5px] text-gris hover:text-encre">
               Tous les contrats <ArrowRight size={13} />
-            </span>
+            </Link>
           </div>
           {aTraiter.length === 0 && <div className="px-6 py-10 text-center text-[13px] text-gris">Rien à traiter pour le moment.</div>}
           <ul>
@@ -76,7 +86,11 @@ export function Dashboard() {
               const p = personnes.find((x) => x.id === c.personneId)!
               const poste = tous.find((x) => x.id === c.posteId)!
               return (
-                <li key={c.id} className="flex items-center gap-4 border-b border-ligne/70 px-6 py-3.5 last:border-0 hover:bg-papier">
+                <li
+                  key={c.id}
+                  onClick={() => navigate(`/contrats?c=${c.id}`)}
+                  className="flex cursor-pointer items-center gap-4 border-b border-ligne/70 px-6 py-3.5 last:border-0 hover:bg-papier"
+                >
                   <Avatar personne={p} size={36} />
                   <div className="min-w-0 flex-1">
                     <div className="text-[13.5px] font-medium">
@@ -97,9 +111,57 @@ export function Dashboard() {
         </section>
 
         <section className="rounded-2xl border border-ligne bg-white p-6">
+          <h2 className="font-display text-[19px] font-medium">Circuit des contrats</h2>
+          <div className="mt-5 space-y-3">
+            {CIRCUIT.map((st) => {
+              const n = duPerimetre.filter((c) => c.statut === st).length
+              const max = Math.max(1, ...CIRCUIT.map((x) => duPerimetre.filter((c) => c.statut === x).length))
+              return (
+                <Link key={st} to="/contrats" className="group block">
+                  <div className="mb-1 flex justify-between text-[12.5px]">
+                    <span className="text-encre-2 group-hover:text-encre">{STATUTS[st].libelle}</span>
+                    <span className="font-semibold tabular-nums">{n}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-ivoire">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${(n / max) * 100}%`, background: st === 'a_corriger' ? '#C24141' : st === 'actif' ? '#2E8B7A' : '#B08A3E' }}
+                    />
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
+      </div>
+
+      <div className="mt-6 grid grid-cols-[1.6fr_1fr] gap-6">
+        <section className="rounded-2xl border border-ligne bg-white p-6">
+          <h2 className="font-display text-[19px] font-medium">Activité récente</h2>
+          <ul className="mt-4 divide-y divide-ligne/70">
+            {activite.map(({ e, c }, i) => {
+              const p = personnes.find((x) => x.id === c.personneId)!
+              return (
+                <li key={i} onClick={() => navigate(`/contrats?c=${c.id}`)} className="flex cursor-pointer items-center gap-3 py-3 hover:bg-papier">
+                  <Avatar personne={p} size={30} />
+                  <div className="min-w-0 flex-1 text-[13px]">
+                    <span className="font-medium">{e.action}</span> · {p.prenom} {p.nom}
+                    <div className="text-[12px] text-gris">
+                      {e.auteur} · {dateFr(e.date)}
+                    </div>
+                  </div>
+                  {e.statut && <StatutBadge statut={e.statut} court />}
+                </li>
+              )
+            })}
+            {activite.length === 0 && <li className="py-6 text-center text-[13px] text-gris">Aucune activité.</li>}
+          </ul>
+        </section>
+
+        <section className="rounded-2xl border border-ligne bg-white p-6">
           <h2 className="font-display text-[19px] font-medium">Par employeur</h2>
           <div className="mt-5 space-y-5">
-            {EMPLOYEURS.map((e) => {
+            {EMPLOYEURS.filter((e) => postes.some((p) => p.employeurId === e.id)).map((e) => {
               const ps = postes.filter((p) => p.employeurId === e.id)
               const ok = ps.filter((p) => p.personneId).length
               return (

@@ -1,6 +1,9 @@
 // Données entièrement fictives (R-002). Aucun nom, e-mail ou salaire réel.
+import { dossierFictif } from './dossier'
 import type {
   Contrat,
+  EvenementContrat,
+  RoleId,
   Echelon,
   Emploi,
   Employeur,
@@ -75,6 +78,7 @@ const P = (
   completude = 100,
   portail: Personne['portail'] = 'actif',
 ): Personne => ({
+  ...dossierFictif(completude, id.length * 13 + id.charCodeAt(2)),
   id,
   civilite,
   prenom,
@@ -86,7 +90,7 @@ const P = (
     .replace(/[^a-z.]/g, '') + '@exemple.fr',
   telephone: `06 00 00 ${String(10 + (id.charCodeAt(id.length - 1) % 89)).padStart(2, '0')} ${String(10 + (id.length * 7) % 89)}`,
   ville,
-  completude,
+  completude: Math.round(completude / 10) * 10,
   portail,
 })
 
@@ -234,6 +238,44 @@ function dates(tc: TypeContrat, annee: number): [string, string | null] {
   }
 }
 
+const NOMS_ROLES: Record<string, string> = {
+  resp_accueil: 'Sophie Marchand',
+  resp_presse: 'Julien Roux',
+  compta: 'Nathalie Garnier',
+  direction: 'Hélène Vasseur',
+}
+
+/** Historique plausible selon l’étape atteinte. */
+function historiqueFictif(def: Def, statut: StatutContrat, proposePar: RoleId, i: number, annee: number): EvenementContrat[] {
+  const pers = PERSONNES.find((p) => p.id === def.p)!
+  if (def.tc === 'CDI' && statut === 'actif')
+    return [{ date: `${annee}-01-05`, auteur: 'Reprise Organigram', action: 'Contrat CDI repris de l’ancien logiciel', statut: 'actif' }]
+  const jour = (j: number) => `${annee}-03-${String(Math.min(28, 2 + ((i * 3 + j) % 20) + j)).padStart(2, '0')}`
+  const h: EvenementContrat[] = [
+    { date: jour(0), auteur: NOMS_ROLES[proposePar], action: 'Proposition d’embauche', statut: 'soumis' },
+  ]
+  const ordre: StatutContrat[] = ['soumis', 'valide_compta', 'signe_direction', 'actif']
+  const rang = statut === 'a_corriger' ? 1 : ordre.indexOf(statut)
+  if (rang >= 1) h.push({ date: jour(2), auteur: NOMS_ROLES.compta, action: 'Validé par la comptabilité', statut: 'valide_compta' })
+  if (rang >= 2) {
+    h.push({ date: jour(4), auteur: NOMS_ROLES.direction, action: 'Validé et signé par la direction', statut: 'signe_direction' })
+    h.push({ date: jour(4), auteur: 'Yousign', action: `Envoyé pour signature à ${pers.prenom} ${pers.nom}` })
+  }
+  if (rang >= 3) {
+    h.push({ date: jour(6), auteur: `${pers.prenom} ${pers.nom}`, action: 'Signé par le collaborateur', statut: 'actif' })
+    h.push({ date: jour(6), auteur: 'Silae', action: 'Salarié et contrat transmis à la paie' })
+  }
+  if (statut === 'a_corriger')
+    h.push({
+      date: jour(4),
+      auteur: NOMS_ROLES.direction,
+      action: 'Renvoyé pour correction',
+      commentaire: 'Merci de vérifier l’échelon proposé (E4 → E3 ?).',
+      statut: 'a_corriger',
+    })
+  return h
+}
+
 function salaire(def: Def): number {
   if (def.tc === 'PRESTATION') return def.k === 'photo' ? 4200 : 3800
   const base = ECHELONS.find((e) => e.id === def.ech)?.salaireBase ?? 0
@@ -264,14 +306,19 @@ export function construireAnnee(annee: number): { postes: Poste[]; contrats: Con
     }
     postes.push(poste)
     if (def.p) {
+      const statut = def.st ?? 'actif'
+      const proposePar: RoleId = def.s === 'accueil' ? 'resp_accueil' : def.s === 'presse' ? 'resp_presse' : 'compta'
       contrats.push({
         id: `c-${id}`,
         posteId: id,
         personneId: def.p,
-        statut: def.st ?? 'actif',
+        statut,
         dateDebut,
         dateFin,
+        echelonId: def.ech,
         salaire: poste.salaire,
+        proposePar,
+        historique: historiqueFictif(def, statut, proposePar, contrats.length, annee),
       })
     }
     def.c?.forEach((c) => walk(c, id))

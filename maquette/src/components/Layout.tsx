@@ -187,8 +187,19 @@ export function ResetButton({ dark = false }: { dark?: boolean }) {
   )
 }
 
+/** Remet le défilement en haut à chaque changement de page. */
+export function useHautDePage() {
+  const { pathname } = useLocation()
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    ref.current?.scrollTo(0, 0)
+  }, [pathname])
+  return ref
+}
+
 export function Layout() {
   const { pathname } = useLocation()
+  const main = useHautDePage()
   const pleinEcran = pathname.startsWith('/organigramme')
   return (
     <div className="flex h-full min-w-[1280px]">
@@ -201,7 +212,7 @@ export function Layout() {
           <RoleSwitcher />
           <ResetButton />
         </header>
-        <main className={`min-h-0 flex-1 ${pleinEcran ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <main ref={main} className={`min-h-0 flex-1 ${pleinEcran ? 'overflow-hidden' : 'overflow-y-auto'}`}>
           <Outlet />
         </main>
       </div>
@@ -209,6 +220,9 @@ export function Layout() {
   )
 }
 
-export function Shell({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-[1320px] px-10 py-9">{children}</div>
+/** `panneau` : une fiche latérale (460 px) est ouverte, le contenu se resserre pour rester visible. */
+export function Shell({ children, panneau = false }: { children: ReactNode; panneau?: boolean }) {
+  return (
+    <div className={`py-9 transition-[padding] duration-200 ${panneau ? 'pr-[490px] pl-10' : 'mx-auto max-w-[1320px] px-10'}`}>{children}</div>
+  )
 }

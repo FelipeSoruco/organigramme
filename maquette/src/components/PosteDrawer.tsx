@@ -1,13 +1,13 @@
-import { BadgeCheck, CalendarDays, FileSignature, Lock, Mail, MapPin, Search, Send, UserMinus, UserPlus, X } from 'lucide-react'
+import { ArrowRight, BadgeCheck, CalendarDays, FileSignature, Lock, Mail, MapPin, Search, UserMinus, UserPlus, X } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { useMemo, useState } from 'react'
 import { ACCREDITATIONS, ECHELONS, EMPLOIS, SERVICES } from '../data/seed'
-import { dansPerimetre, getRole } from '../roles'
+import { dansPerimetre, getRole, peutProposer } from '../roles'
 import { useDemo } from '../store'
 import type { Poste } from '../types'
+import { contratDuPoste } from '../workflow'
+import { CircuitStepper, PropositionModal } from './Contrat'
 import { Avatar, Button, dateFr, EmployeurPastille, euros, Progress, StatutBadge, STATUTS, TypeContratBadge } from './ui'
-
-const ETAPES = ['soumis', 'valide_compta', 'signe_direction', 'actif'] as const
-const ETAPES_LABEL = ['Comptabilité', 'Direction', 'Collaborateur', 'Signé']
 
 function Ligne({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -23,10 +23,10 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
   const role = getRole(roleId)
   const [choisir, setChoisir] = useState(false)
   const [q, setQ] = useState('')
-  const [info, setInfo] = useState<string | null>(null)
+  const [proposer, setProposer] = useState(false)
 
   const personne = personnes.find((p) => p.id === poste.personneId)
-  const contrat = contrats.find((c) => c.posteId === poste.id)
+  const contrat = contratDuPoste(contrats, poste.id)
   const parent = postes.find((p) => p.id === poste.parentId)
   const parentPers = personnes.find((p) => p.id === parent?.personneId)
   const voitDetails = dansPerimetre(role, poste)
@@ -39,10 +39,10 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
       .filter((p) => `${p.prenom} ${p.nom}`.toLowerCase().includes(q.toLowerCase()))
   }, [personnes, postes, poste.annee, q])
 
-  const etapeIdx = contrat ? ETAPES.indexOf(contrat.statut as (typeof ETAPES)[number]) : -1
+  const proposable = peutProposer(role, poste)
 
   return (
-    <aside className="anim-drawer absolute inset-y-0 right-0 z-40 flex w-[440px] flex-col border-l border-ligne bg-white shadow-2xl shadow-encre/10">
+    <aside className="anim-drawer fixed top-[68px] right-0 bottom-0 z-40 flex w-[440px] flex-col border-l border-ligne bg-white shadow-2xl shadow-encre/10">
       <div className="flex items-start justify-between gap-4 border-b border-ligne px-7 pt-6 pb-5">
         <div>
           <div className="mb-2 flex items-center gap-2">
@@ -95,35 +95,13 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
                   <span className="text-[12px] text-gris">Contrat</span>
                   <StatutBadge statut={contrat.statut} />
                 </div>
-                {contrat.statut !== 'a_corriger' && contrat.statut !== 'refuse' && (
-                  <div className="flex items-center">
-                    {ETAPES_LABEL.map((l, i) => (
-                      <div key={l} className="flex flex-1 flex-col items-center gap-1.5">
-                        <div className="flex w-full items-center">
-                          <div className={`h-px flex-1 ${i === 0 ? 'opacity-0' : i <= etapeIdx ? 'bg-or' : 'bg-ligne'}`} />
-                          <span
-                            className={`grid size-5 place-items-center rounded-full text-[10px] font-bold ${
-                              i < etapeIdx || contrat.statut === 'actif'
-                                ? 'bg-or text-white'
-                                : i === etapeIdx
-                                  ? 'bg-white text-or ring-2 ring-or'
-                                  : 'bg-ligne text-gris'
-                            }`}
-                          >
-                            {i < etapeIdx || contrat.statut === 'actif' ? '✓' : i + 1}
-                          </span>
-                          <div className={`h-px flex-1 ${i === 3 ? 'opacity-0' : i < etapeIdx ? 'bg-or' : 'bg-ligne'}`} />
-                        </div>
-                        <span className="text-[10.5px] text-gris">{l}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {contrat.statut === 'a_corriger' && (
-                  <p className="rounded-lg bg-[#FBE3E3]/60 px-3 py-2 text-[12px] text-[#9B2C2C]">
-                    Renvoyé par la comptabilité : « Merci de vérifier l’échelon proposé (E4 → E3 ?). »
-                  </p>
-                )}
+                <CircuitStepper contrat={contrat} />
+                <Link
+                  to={`/contrats?c=${contrat.id}`}
+                  className="mt-3 inline-flex items-center gap-1 text-[12px] font-medium text-or hover:underline"
+                >
+                  Voir le contrat et son historique <ArrowRight size={12} />
+                </Link>
               </div>
             )}
           </div>
@@ -192,23 +170,19 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
             </button>
           </div>
         )}
-        {!role.peutEditer && voitDetails && role.id !== 'direction' && (
-          <div className="mt-3">
+        {proposable && !choisir && (!personne || !contrat) && (
+          <div className="mt-2">
             <Button
-              variant="primary"
+              variant={personne ? 'primary' : role.peutEditer ? 'or' : 'primary'}
               icon={<FileSignature size={15} />}
               className="w-full"
-              onClick={() => setInfo('Le circuit de contrats arrive dans la phase 4 de la maquette.')}
+              onClick={() => setProposer(true)}
             >
-              {personne ? 'Proposer un avenant' : 'Proposer une embauche'}
+              {personne ? 'Préparer le contrat' : 'Proposer une embauche'}
             </Button>
           </div>
         )}
-        {info && (
-          <p className="anim-fade mt-2 flex items-center gap-2 rounded-lg bg-ivoire px-3 py-2 text-[12px] text-gris">
-            <Send size={13} className="text-or" /> {info}
-          </p>
-        )}
+        {proposer && <PropositionModal poste={poste} personneId={personne?.id} onClose={() => setProposer(false)} />}
 
         {/* Détails */}
         <div className="mt-7 mb-1 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">Le poste</div>
