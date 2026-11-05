@@ -1,5 +1,10 @@
 # Decisiones
 
+## D-009 · 2026-11-05 · Reglas del circuito de contratos
+- **Decisión:** (1) un responsable de servicio propone solo en su servicio; comptabilité (y admin) en todos; (2) un contrato «À corriger» vuelve a quien lo propuso; (3) un contrato refusé deja el puesto «à pourvoir».
+- **Motivo:** confirmado por Felipe (P-014); ya implementado en `maquette/src/workflow.ts`, `roles.ts` y `store.ts`.
+- **Origen:** conversación 2026-11-05
+
 ## D-008 · 2026-11-05 · Regla de «Préparer l’exercice suivant»
 - **Decisión:** al preparar el año siguiente se copian todos los puestos; los CDI conservan a su titular, los CDD, stages y prestations quedan «à pourvoir».
 - **Motivo:** confirmado por Felipe (P-012).
