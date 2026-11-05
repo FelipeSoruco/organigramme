@@ -110,7 +110,7 @@ export const PERSONNES: Personne[] = [
   P('p-roux', 'M.', 'Julien', 'Roux', 'Paris'),
   P('p-rousseau', 'Mme', 'Emma', 'Rousseau', 'Nice', 100),
   P('p-faure', 'M.', 'Hugo', 'Faure', 'Marseille', 75),
-  P('p-mercier', 'Mme', 'Chloé', 'Mercier', 'Bordeaux', 80),
+  P('p-mercier', 'Mme', 'Chloé', 'Mercier', 'Bordeaux', 60),
   P('p-blanc', 'M.', 'Nicolas', 'Blanc', 'Paris'),
   P('p-chevalier', 'Mme', 'Manon', 'Chevalier', 'Nantes', 70),
   P('p-lambert', 'M.', 'Paul', 'Lambert', 'Cannes', 100),

@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, Eye, FileCheck2, FileX2, Lock, Mail, MapPin, Phone, Plus, Search, Send } from 'lucide-react'
+import { ArrowLeft, Check, Eye, FileCheck2, FileX2, Lock, Mail, MapPin, Phone, Plus, Search, Send, Upload } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Historique } from '../components/Contrat'
@@ -25,6 +25,7 @@ import { dansPerimetre, getRole, voitDonneesSensibles } from '../roles'
 import { useDemo, type NouvellePersonne } from '../store'
 import type { Personne, PortailStatut } from '../types'
 import { notifier } from '../ui-store'
+import { SystemeBadge, TransmissionStatut } from './Transmissions'
 
 const PORTAIL: Record<PortailStatut, { libelle: string; ton: string }> = {
   non_invite: { libelle: 'Non invité·e', ton: 'bg-[#EFEDE8] text-gris' },
@@ -250,7 +251,7 @@ function NouvellePersonneModal({ onClose, onCree }: { onClose: () => void; onCre
 /* ---------- Fiche personne ---------- */
 export function PersonneFiche() {
   const { id } = useParams()
-  const { personnes, postes, contrats, inviter, role: roleId } = useDemo()
+  const { personnes, postes, contrats, transmissions, inviter, deposerDocument, role: roleId } = useDemo()
   const role = getRole(roleId)
   const p = personnes.find((x) => x.id === id)
   const [voirSensible, setVoirSensible] = useState(false)
@@ -266,6 +267,7 @@ export function PersonneFiche() {
   const visible = sesPostes.length === 0 || sesPostes.some((x) => dansPerimetre(role, x))
   const sensible = voitDonneesSensibles(role)
   const manquantes = piecesManquantes(p)
+  const sesEnvois = transmissions.filter((t) => t.personneId === p.id)
 
   return (
     <Shell>
@@ -444,11 +446,35 @@ export function PersonneFiche() {
                           Ouvrir
                         </button>
                       )}
+                      {!doc && sensible && role.peutEditer && (
+                        <button
+                          onClick={() => {
+                            deposerDocument(p.id, d.id, `${d.id}-${p.nom.toLowerCase()}.pdf`)
+                            notifier('Document déposé', `${d.libelle} ajouté au dossier de ${p.prenom} ${p.nom}`)
+                          }}
+                          className="flex items-center gap-1 text-[12px] text-or hover:underline"
+                        >
+                          <Upload size={12} /> Déposer
+                        </button>
+                      )}
                     </div>
                   )
                 })}
               </div>
             </Section>
+            {sesEnvois.length > 0 && (
+              <Section titre="Transmissions" action={<Link to="/transmissions" className="text-[12px] font-medium text-or hover:underline">Journal →</Link>}>
+                <div className="space-y-2">
+                  {sesEnvois.map((t) => (
+                    <div key={t.id} className="flex items-center gap-3 text-[13px]">
+                      <SystemeBadge systeme={t.systeme} />
+                      <span className="min-w-0 flex-1 truncate">{t.objet}</span>
+                      <TransmissionStatut t={t} />
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            )}
             <div>
               <Libelle>Accès portail</Libelle>
               <p className="text-[12.5px] leading-relaxed text-gris">

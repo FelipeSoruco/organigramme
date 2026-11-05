@@ -1,5 +1,5 @@
 @import '@fontsource-variable/inter';
-@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/fraunces/soft.css';
 @import 'tailwindcss';
 
 @theme {
@@ -32,6 +32,11 @@ body {
   font-family: var(--font-sans);
   font-feature-settings: 'cv11', 'ss01';
   -webkit-font-smoothing: antialiased;
+}
+
+/* Titres : Fraunces aux formes adoucies (P-015, style moins sérieux) */
+.font-display {
+  font-variation-settings: 'SOFT' 100, 'WONK' 0;
 }
 
 /* ---------- Organigramme : connecteurs ---------- */
