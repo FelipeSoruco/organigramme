@@ -1,5 +1,23 @@
 # Decisiones
 
+## D-012 · 2026-11-05 · Estilo visual más ligero sin color nuevo (P-015)
+- **Decisión:** barra lateral clara, títulos Fraunces «soft», etiquetas sin mayúsculas forzadas, botones en píldora, bloques destacados en dorado pálido en vez de negro. Se mantiene la paleta marfil/tinta/dorado.
+- **Motivo:** Felipe pidió «menos serio» conservando el estilo aprobado; validado al pedir la fusión en `main`.
+- **Descartado:** añadir un color de acento nuevo — chocaría con los colores de los empleadores (índigo, naranja, verde).
+- **Origen:** docs/sesiones/2026-11-05-maqueta-fases-6-7.md
+
+## D-011 · 2026-11-05 · La compta puede depositar piezas en nombre de la persona
+- **Decisión:** en la ficha de una persona, compta/admin pueden depositar una pieza justificativa que falta.
+- **Motivo:** cierra el ciclo de un envío rechazado (error → completar dossier → relanzar) sin depender de la persona; la compta a menudo recibe los documentos por e-mail.
+- **Descartado:** que solo la persona complete su dossier — un envío bloqueado no tendría salida desde el back-office.
+- **Origen:** docs/sesiones/2026-11-05-maqueta-fases-6-7.md
+
+## D-010 · 2026-11-05 · Reglas de los envíos Silae / POSI (supuesto de la maqueta)
+- **Decisión:** el envío se dispara cuando firma el collaborateur. Silae exige NIR, IBAN, dirección y fecha/lugar de nacimiento; POSI exige foto, nacimiento y pieza de identidad. Las prestations no van a Silae (solo POSI). Un envío rechazado queda «En erreur» con su causa y se puede relanzar; si la causa es una pieza del dossier, se vuelve a verificar.
+- **Motivo:** hace visible y corregible cada fallo sin recaptura manual.
+- **Descartado:** —. Pendiente de confirmar con la paie y POSI (P-004, P-005): campos exactos y protocolo.
+- **Origen:** docs/sesiones/2026-11-05-maqueta-fases-6-7.md
+
 ## D-009 · 2026-11-05 · Reglas del circuito de contratos
 - **Decisión:** (1) un responsable de servicio propone solo en su servicio; comptabilité (y admin) en todos; (2) un contrato «À corriger» vuelve a quien lo propuso; (3) un contrato refusé deja el puesto «à pourvoir».
 - **Motivo:** confirmado por Felipe (P-014); ya implementado en `maquette/src/workflow.ts`, `roles.ts` y `store.ts`.

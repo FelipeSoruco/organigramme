@@ -1,18 +1,11 @@
 # Estado — actualizado 2026-11-05
 
-**En curso:** maqueta navegable en `maquette/`, publicada en https://organigramme-demo.netlify.app/ (D-007). Fases 1–5 hechas y fusionadas en `main`; faltan las fases 6–7.
-**Funciona y está verificado** (build OK, `npm ci` limpio, recorrido Playwright de punta a punta, 0 errores de consola):
-- Fases 1–2: layout, 7 roles, años, organigrama 2026, ficha de poste, «Préparer 2027» (D-008).
-- Fase 3: Postes (lista, filtros, «Nouveau poste»), Personnes (lista, % dossier, «Inviter au portail», relances, ficha con 10 piezas, NIR/IBAN enmascarados solo para compta/admin).
-- Fase 4: Contrats (circuito responsable → compta → direction con firma Yousign simulada → collaborateur; renvoyer, refuser, corriger; historial; aperçu del documento) + tableau de bord por rol (circuito, actividad reciente).
-- Fase 5: Portail collaborateur (Marie Dupont): accueil, mes informations con foto, mes documents, mes contrats con firma; Notes de frais y Congés «Bientôt».
-- El panel lateral ya no tapa el puesto en el organigrama ni los filtros de las listas.
-**Publicación:** Netlify publica la rama `main` (configurado por Felipe 2026-11-05). Trabajar las fases nuevas en la rama de la sesión y fusionar en `main` solo cuando Felipe apruebe, para no cambiar la demo que ve el festival.
-**Problemas conocidos:** avisos menores de oxlint (fast refresh). Netlify publica cada push de la rama de producción: el sitio que ve el festival cambia en cuanto se fusiona algo en ella.
-**Próximo paso concreto:** fase 6 — Transmissions (journal Silae/POSI con errores y relance), BO en lectura (référentiels, droits, connecteurs), rapports CSV.
-**Archivos clave:** `maquette/src/store.ts` (acciones), `maquette/src/workflow.ts` (circuito), `maquette/src/components/Contrat.tsx`, `maquette/src/pages/` (Postes, Personnes, Contrats, Portail), `maquette/src/data/seed.ts` + `dossier.ts`, `netlify.toml`
-
-## Plan de la maqueta (aprobado 2026-11-04)
-1. ✅ Base · 2. ✅ Organigramme · 3. ✅ Postes y personnes · 4. ✅ Circuito de contratos + tableau de bord · 5. ✅ Portail collaborateur
-6. Transmissions simuladas Silae/POSI, BO en lectura, rapports CSV.
-7. Pulido visual (estilo menos serio, P-015) + recorrido demo completo.
+**En curso:** maqueta navegable **completa** (fases 1–7) en `maquette/`, fusionada en `main` (PR #3) y publicada por Netlify en https://organigramme-demo.netlify.app/ (D-007). Lista para mostrar al cliente con `docs/guion-demo.md`.
+**Funciona y está verificado** (build OK, recorrido Playwright de 11 pantallas × 5 roles, 0 errores de consola):
+- Fases 1–5: layout, 7 roles, años, organigrama, «Préparer 2027» (D-008), postes, personnes, circuito de contratos con firma Yousign simulada (D-009), tableau de bord por rol, portail collaborateur.
+- Fase 6: Transmissions Silae/POSI con errores y relance (D-010); la compta deposita piezas que faltan (D-011); Rapports con export CSV; Administration en lectura (Référentiels, Utilisateurs & droits, Connecteurs).
+- Fase 7: estilo más ligero (D-012) y guion de demo.
+**Publicación:** Netlify publica `main`. Trabajar en la rama de la sesión y fusionar en `main` solo cuando Felipe lo apruebe (la demo cambia en cuanto se fusiona).
+**Problemas conocidos:** avisos menores de oxlint (fast refresh, `Date` en el render). La publicación en Netlify tras PR #3 no se comprobó (P-017). «Formules» no está en Référentiels (P-018, depende de P-003).
+**Próximo paso concreto:** comprobar la demo en Netlify (P-017) y mostrarla al cliente; después, devis y cahier des charges en francés (P-010).
+**Archivos clave:** `maquette/src/store.ts` (acciones), `maquette/src/workflow.ts` (circuito), `maquette/src/transmissions.ts` (envíos), `maquette/src/pages/` (Transmissions, Rapports, Admin, Contrats, Personnes, Portail…), `maquette/src/data/seed.ts` + `dossier.ts`, `maquette/src/index.css` (estilo), `docs/guion-demo.md`
