@@ -32,3 +32,7 @@
 - Una sesión nueva puede arrancar en una rama vieja o vacía: la referencia del trabajo vigente es `main`, y conviene empezar desde ahí.
 - Fusionar mediante un PR deja registro de qué cambió y cuándo, y Netlify publica `main` solo.
 - Al cambiar el nombre del almacenamiento de la demo (`-v3`), quien ya la había probado empieza con los datos nuevos sin tener que pulsar nada (↻ sigue sirviendo para reiniciar).
+
+## Después del cierre
+- El deploy de Netlify falló: «unrecognized Git contributor». El plan gratuito solo acepta commits de FelipeSoruco y la fusión del PR #3 salió a nombre de DaniSoruco. Felipe fusionó el PR #4 desde FelipeSoruco y la publicación funcionó.
+- Nueva regla R-006 (fusiones en `main` por Felipe). P-017 cerrado.
