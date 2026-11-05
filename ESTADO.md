@@ -7,6 +7,7 @@
 - Fase 4: Contrats (circuito responsable → compta → direction con firma Yousign simulada → collaborateur; renvoyer, refuser, corriger; historial; aperçu del documento) + tableau de bord por rol (circuito, actividad reciente).
 - Fase 5: Portail collaborateur (Marie Dupont): accueil, mes informations con foto, mes documents, mes contrats con firma; Notes de frais y Congés «Bientôt».
 - El panel lateral ya no tapa el puesto en el organigrama ni los filtros de las listas.
+**Publicación:** Netlify publica la rama `main` (configurado por Felipe 2026-11-05). Trabajar las fases nuevas en la rama de la sesión y fusionar en `main` solo cuando Felipe apruebe, para no cambiar la demo que ve el festival.
 **Problemas conocidos:** avisos menores de oxlint (fast refresh). Netlify publica cada push de la rama de producción: el sitio que ve el festival cambia en cuanto se fusiona algo en ella.
 **Próximo paso concreto:** fase 6 — Transmissions (journal Silae/POSI con errores y relance), BO en lectura (référentiels, droits, connecteurs), rapports CSV.
 **Archivos clave:** `maquette/src/store.ts` (acciones), `maquette/src/workflow.ts` (circuito), `maquette/src/components/Contrat.tsx`, `maquette/src/pages/` (Postes, Personnes, Contrats, Portail), `maquette/src/data/seed.ts` + `dossier.ts`, `netlify.toml`

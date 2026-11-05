@@ -24,6 +24,12 @@
 - Nuevos: P-013 (Netlify), P-014 (supuestos del circuito), P-015 (estilo menos serio), P-016 (fusionar a main)
 - Resueltos: P-011, P-012 · En curso: P-009 (faltan fases 6–7)
 
+## Después del cierre
+- Felipe publicó en https://organigramme-demo.netlify.app/ y confirmó los supuestos del circuito (D-009).
+- Rama fusionada en `main` (PR FelipeSoruco/organigramme#1); Felipe cambió la rama de producción de Netlify a `main` y redeplegó.
+- Cerrados: P-013, P-014, P-016.
+
 ## Qué aprendió Felipe
 - Netlify puede construir el sitio directamente desde GitHub: no hace falta instalar nada en el PC, y cada cambio subido actualiza el enlace.
+- Netlify publica una rama concreta: la «production branch» se cambia en la configuración del proyecto.
 - En esta maqueta los datos viven en el navegador de cada visitante: lo que prueben los responsables del festival no afecta a nadie más, y ↻ lo deja como nuevo.
