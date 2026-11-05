@@ -14,6 +14,7 @@ Plataforma RH a medida para 3 empleadores (AFFIF, CINÉFONDATION, SOGOFIF) que r
 - Bitácoras: docs/sesiones/ (solo si hace falta un detalle histórico)
 - Código: `maquette/` — maqueta navegable (Vite + React + TS + Tailwind, sin servidor, datos ficticios en el navegador)
 - Comandos (desde `maquette/`): `npm install` · `npm run dev` · `npm run build`
+- Despliegue: `netlify.toml` (Netlify construye `maquette/` en cada push; D-007)
 
 ## Arquitectura funcional (resumen)
 - **Espace de travail (FO):** tableau de bord, organigramme, postes, personnes, contrats, transmissions, rapports.

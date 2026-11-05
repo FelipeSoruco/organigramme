@@ -1,6 +1,17 @@
 # Decisiones
 
-## D-006 · 2026-11-04 · Maqueta primero, en local
+## D-008 · 2026-11-05 · Regla de «Préparer l’exercice suivant»
+- **Decisión:** al preparar el año siguiente se copian todos los puestos; los CDI conservan a su titular, los CDD, stages y prestations quedan «à pourvoir».
+- **Motivo:** confirmado por Felipe (P-012).
+- **Origen:** docs/sesiones/2026-11-05-maqueta-fases-3-5-netlify.md
+
+## D-007 · 2026-11-05 · Maqueta publicada en Netlify (reemplaza en parte D-006)
+- **Decisión:** la maqueta se publica en Netlify desde GitHub (`netlify.toml` en la raíz, construye `maquette/`, marcada noindex). Sigue sin servidor: cada visitante tiene sus datos en su navegador.
+- **Motivo:** Felipe no logró instalarla en su PC y quiere mostrarla a los responsables del festival con un enlace.
+- **Descartado:** solo en local — difícil de mostrar; Netlify CLI con token — innecesario, la importación desde GitHub se actualiza sola en cada push.
+- **Origen:** docs/sesiones/2026-11-05-maqueta-fases-3-5-netlify.md
+
+## D-006 · 2026-11-04 · Maqueta primero, en local (en parte reemplazada por D-007)
 - **Decisión:** antes del producto real, una maqueta navegable en local (Vite + React + TS + Tailwind, datos ficticios en el navegador, selector de rol y de año).
 - **Motivo:** vender la solución y cerrar el alcance; el cliente valora sobre todo lo visual.
 - **Descartado:** producto real directo — demasiado riesgo sin alcance validado. Netlify + Neon queda para la versión real.
