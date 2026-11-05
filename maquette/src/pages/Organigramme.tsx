@@ -317,7 +317,7 @@ export function Organigramme() {
       {/* En-tête */}
       <div className="flex shrink-0 items-end justify-between gap-6 border-b border-ligne bg-ivoire px-10 pt-7 pb-5">
         <div>
-          <div className="mb-1 text-xs font-semibold tracking-[0.14em] text-or uppercase">Exercice {annee}</div>
+          <div className="mb-1 text-[13px] font-medium text-or">Exercice {annee}</div>
           <h1 className="font-display text-[34px] leading-tight font-medium tracking-tight">Organigramme</h1>
           <div className="mt-2 flex items-center gap-5 text-[13px] text-gris">
             <span>

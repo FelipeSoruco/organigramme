@@ -147,7 +147,7 @@ export function Transmissions() {
                       <td colSpan={6} className="px-5 py-4">
                         <div className="anim-fade grid grid-cols-[1fr_auto] gap-6">
                           <div>
-                            <div className="mb-2 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">Tentatives</div>
+                            <div className="mb-2 text-[12px] font-medium text-gris">Tentatives</div>
                             <ol className="space-y-1.5 text-[12.5px]">
                               {t.tentatives.map((x, i) => (
                                 <li key={i} className="flex items-start gap-2">

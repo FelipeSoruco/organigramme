@@ -113,7 +113,7 @@ export function Button({
       title={title}
       disabled={disabled}
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${v} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 ${v} ${className}`}
     >
       {icon}
       {children}
@@ -140,7 +140,7 @@ export function PageHeader({ surtitre, titre, children }: { surtitre?: string; t
   return (
     <div className="flex items-end justify-between gap-6">
       <div>
-        {surtitre && <div className="mb-1 text-xs font-semibold tracking-[0.14em] text-or uppercase">{surtitre}</div>}
+        {surtitre && <div className="mb-1 text-[13px] font-medium text-or first-letter:uppercase">{surtitre}</div>}
         <h1 className="font-display text-[34px] leading-tight font-medium tracking-tight text-encre">{titre}</h1>
       </div>
       {children && <div className="flex items-center gap-2">{children}</div>}
@@ -172,7 +172,7 @@ export function Modal({
       >
         <div className="flex items-start justify-between gap-4 border-b border-ligne px-7 pt-6 pb-5">
           <div>
-            {surtitre && <div className="mb-1 text-[11px] font-semibold tracking-[0.14em] text-or uppercase">{surtitre}</div>}
+            {surtitre && <div className="mb-1 text-[12.5px] font-medium text-or">{surtitre}</div>}
             <h2 className="font-display text-[22px] leading-tight font-medium tracking-tight">{titre}</h2>
           </div>
           <button onClick={onClose} className="grid size-8 place-items-center rounded-lg text-gris hover:bg-ivoire hover:text-encre">
@@ -212,7 +212,7 @@ export function Section({ titre, children, action }: { titre: string; children: 
 }
 
 export function Libelle({ children }: { children: ReactNode }) {
-  return <div className="mb-2 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">{children}</div>
+  return <div className="mb-2 text-[12px] font-medium text-gris">{children}</div>
 }
 
 export function Puce({ actif, onClick, children, compte }: { actif: boolean; onClick: () => void; children: ReactNode; compte?: number }) {
@@ -220,12 +220,12 @@ export function Puce({ actif, onClick, children, compte }: { actif: boolean; onC
     <button
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-medium transition ${
-        actif ? 'border-encre bg-encre text-ivoire' : 'border-ligne bg-papier text-gris hover:border-ligne-forte hover:text-encre'
+        actif ? 'border-or/50 bg-or-pale text-encre' : 'border-ligne bg-white text-gris hover:border-ligne-forte hover:text-encre'
       }`}
     >
       {children}
       {compte !== undefined && (
-        <span className={`rounded-full px-1.5 text-[11px] tabular-nums ${actif ? 'bg-white/15' : 'bg-ivoire'}`}>{compte}</span>
+        <span className={`rounded-full px-1.5 text-[11px] tabular-nums ${actif ? 'bg-white text-or' : 'bg-ivoire'}`}>{compte}</span>
       )}
     </button>
   )

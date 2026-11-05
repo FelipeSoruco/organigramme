@@ -40,14 +40,14 @@ function NavItem({ to, label, icon: Icon }: { to: string; label: string; icon: t
       to={to}
       end={to === '/'}
       className={({ isActive }) =>
-        `group flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] transition ${
-          isActive ? 'bg-white/[0.08] text-white' : 'text-white/55 hover:bg-white/[0.04] hover:text-white/90'
+        `group flex items-center gap-3 rounded-xl px-3 py-2 text-[13.5px] transition ${
+          isActive ? 'bg-or-pale font-medium text-encre' : 'text-gris hover:bg-ivoire hover:text-encre'
         }`
       }
     >
       {({ isActive }) => (
         <>
-          <Icon size={17} strokeWidth={1.7} className={isActive ? 'text-or-clair' : ''} />
+          <Icon size={17} strokeWidth={1.8} className={isActive ? 'text-or' : ''} />
           {label}
         </>
       )}
@@ -58,17 +58,17 @@ function NavItem({ to, label, icon: Icon }: { to: string; label: string; icon: t
 function Sidebar() {
   const role = getRole(useDemo((s) => s.role))
   return (
-    <aside className="flex w-[248px] shrink-0 flex-col bg-nuit px-4 py-6 text-white">
+    <aside className="flex w-[248px] shrink-0 flex-col border-r border-ligne bg-white px-4 py-6 text-encre">
       <div className="mb-9 flex items-center gap-3 px-2">
-        <div className="grid size-9 place-items-center rounded-xl bg-white/[0.06] ring-1 ring-white/10">
-          <Network size={18} className="text-or-clair" />
+        <div className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-or-clair to-or text-white shadow-sm shadow-or/30">
+          <Network size={18} />
         </div>
         <div>
           <div className="font-display text-[19px] leading-none font-medium tracking-tight">Organigramme</div>
-          <div className="mt-1 text-[11px] tracking-[0.12em] text-white/40 uppercase">Espace RH</div>
+          <div className="mt-1 text-[12px] text-gris">Espace RH</div>
         </div>
       </div>
-      <div className="mb-2 px-3 text-[10.5px] font-semibold tracking-[0.14em] text-white/30 uppercase">Espace de travail</div>
+      <div className="mb-2 px-3 text-[11.5px] font-medium text-gris-clair">Espace de travail</div>
       <nav className="flex flex-col gap-0.5">
         {NAV_TRAVAIL.map((n) => (
           <NavItem key={n.to} {...n} />
@@ -76,9 +76,7 @@ function Sidebar() {
       </nav>
       {role.accesAdmin && (
         <>
-          <div className="mt-8 mb-2 px-3 text-[10.5px] font-semibold tracking-[0.14em] text-white/30 uppercase">
-            Administration
-          </div>
+          <div className="mt-8 mb-2 px-3 text-[11.5px] font-medium text-gris-clair">Administration</div>
           <nav className="flex flex-col gap-0.5">
             {NAV_ADMIN.map((n) => (
               <NavItem key={n.to} {...n} />
@@ -86,8 +84,8 @@ function Sidebar() {
           </nav>
         </>
       )}
-      <div className="mt-auto rounded-xl bg-white/[0.04] p-3 text-[11.5px] leading-relaxed text-white/45 ring-1 ring-white/[0.06]">
-        <span className="font-medium text-or-clair">Maquette</span> — données fictives. Changez de rôle en haut à droite pour voir
+      <div className="mt-auto rounded-xl bg-ivoire p-3 text-[11.5px] leading-relaxed text-gris">
+        <span className="font-medium text-or">Maquette</span> — données fictives. Changez de rôle en haut à droite pour voir
         ce que voit chacun.
       </div>
     </aside>
@@ -120,7 +118,7 @@ export function RoleSwitcher() {
       </button>
       {open && (
         <div className="anim-fade absolute top-full right-0 z-50 mt-2 w-[330px] rounded-2xl border border-ligne bg-white p-2 shadow-xl shadow-encre/10">
-          <div className="px-3 pt-2 pb-2 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">
+          <div className="px-3 pt-2 pb-2 text-[12px] font-medium text-gris">
             Voir la plateforme en tant que…
           </div>
           {ROLES.map((x) => {

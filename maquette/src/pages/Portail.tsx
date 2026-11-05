@@ -135,13 +135,13 @@ function Accueil() {
       </div>
 
       {aSigner && poste && (
-        <div className="anim-fade mt-8 flex items-center gap-6 rounded-2xl bg-nuit p-6 text-white">
-          <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white/10 text-or-clair">
+        <div className="anim-fade mt-8 flex items-center gap-6 rounded-2xl border border-or/40 bg-gradient-to-r from-or-pale to-white p-6">
+          <div className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-or-clair to-or text-white shadow-sm shadow-or/30">
             <FileSignature size={22} />
           </div>
           <div className="flex-1">
             <div className="font-display text-[21px] font-medium">Votre contrat est prêt à être signé</div>
-            <div className="mt-1 text-[13px] text-white/55">
+            <div className="mt-1 text-[13px] text-gris">
               {libelleModele(postes.find((p) => p.id === aSigner.posteId)!.typeContrat)} · {dateFr(aSigner.dateDebut)} →{' '}
               {dateFr(aSigner.dateFin)} · déjà signé par la direction
             </div>

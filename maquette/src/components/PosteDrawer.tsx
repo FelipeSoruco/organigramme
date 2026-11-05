@@ -61,7 +61,7 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
 
       <div className="min-h-0 flex-1 overflow-y-auto px-7 py-6">
         {/* Occupant */}
-        <div className="mb-2 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">Titulaire</div>
+        <div className="mb-2 text-[12px] font-medium text-gris">Titulaire</div>
         {personne ? (
           <div className="rounded-2xl border border-ligne bg-papier p-4">
             <div className="flex items-center gap-3">
@@ -185,7 +185,7 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
         {proposer && <PropositionModal poste={poste} personneId={personne?.id} onClose={() => setProposer(false)} />}
 
         {/* Détails */}
-        <div className="mt-7 mb-1 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">Le poste</div>
+        <div className="mt-7 mb-1 text-[12px] font-medium text-gris">Le poste</div>
         <Ligne label="Rattaché à">
           {parent ? (
             <>
@@ -210,7 +210,7 @@ export function PosteDrawer({ poste, onClose }: { poste: Poste; onClose: () => v
           </span>
         </Ligne>
 
-        <div className="mt-7 mb-1 text-[10.5px] font-semibold tracking-[0.14em] text-gris uppercase">Rémunération</div>
+        <div className="mt-7 mb-1 text-[12px] font-medium text-gris">Rémunération</div>
         {voitDetails ? (
           <>
             <Ligne label="Échelon">{echelon ? `${echelon.code} · ${echelon.libelle}` : 'Hors grille'}</Ligne>

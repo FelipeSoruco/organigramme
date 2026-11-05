@@ -49,7 +49,7 @@ export function Dashboard() {
     <Shell>
       <PageHeader surtitre={aujourdhui} titre={`Bonjour ${prenom === 'Administrateur' ? '' : prenom}`.trim()}>
         <Link to="/organigramme">
-          <span className="inline-flex items-center gap-2 rounded-lg bg-encre px-3.5 py-2 text-sm font-medium text-ivoire shadow-sm hover:bg-encre-2">
+          <span className="inline-flex items-center gap-2 rounded-full bg-encre px-4 py-2 text-sm font-medium text-ivoire shadow-sm hover:bg-encre-2">
             <Network size={15} /> Ouvrir l’organigramme {annee}
           </span>
         </Link>
@@ -82,12 +82,12 @@ export function Dashboard() {
         {kpis.map((k, i) => (
           <div
             key={k.l}
-            className={`anim-fade rounded-2xl border p-5 ${k.accent ? 'border-encre bg-nuit text-white' : 'border-ligne bg-white'}`}
+            className={`anim-fade rounded-2xl border p-5 ${k.accent ? 'border-or/40 bg-or-pale' : 'border-ligne bg-white'}`}
             style={{ animationDelay: `${i * 50}ms` }}
           >
-            <div className={`text-[12.5px] ${k.accent ? 'text-white/55' : 'text-gris'}`}>{k.l}</div>
-            <div className={`font-display mt-2 text-[40px] leading-none font-medium tabular-nums ${k.accent ? 'text-or-clair' : ''}`}>{k.v}</div>
-            <div className={`mt-2 text-[12px] ${k.accent ? 'text-white/45' : 'text-gris-clair'}`}>{k.s}</div>
+            <div className={`text-[12.5px] ${k.accent ? 'font-medium text-[#7A5A12]' : 'text-gris'}`}>{k.l}</div>
+            <div className={`font-display mt-2 text-[40px] leading-none font-medium tabular-nums ${k.accent ? 'text-[#7A5A12]' : ''}`}>{k.v}</div>
+            <div className={`mt-2 text-[12px] ${k.accent ? 'text-[#7A5A12]/70' : 'text-gris-clair'}`}>{k.s}</div>
           </div>
         ))}
       </div>
