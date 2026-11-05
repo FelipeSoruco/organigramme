@@ -18,5 +18,5 @@
 | P-014 | Confirmar 3 supuestos del circuito: el responsable propone solo en su servicio (compta en todos); «À corriger» vuelve a quien propuso; un contrato refusé deja el puesto à pourvoir | Felipe | 2026-11-05 | hecho 2026-11-05 (D-009) |
 | P-015 | Aligerar el estilo visual (menos serio) — en la fase 7 de pulido | Claude | 2026-11-05 | hecho 2026-11-05 (D-012) |
 | P-016 | Fusionar la rama de trabajo en `main` para que Netlify siga `main` (vía PR, cuando Felipe lo pida) | Claude | 2026-11-05 | hecho 2026-11-05 |
-| P-017 | Comprobar en https://organigramme-demo.netlify.app/ que se publicaron las fases 6–7 (pulsar ↻ una vez) | Felipe | 2026-11-05 | abierto |
+| P-017 | Comprobar en https://organigramme-demo.netlify.app/ que se publicaron las fases 6–7 (pulsar ↻ una vez) | Felipe | 2026-11-05 | hecho 2026-11-05 (tras fusionar el PR #4 desde FelipeSoruco; R-006) |
 | P-018 | Añadir «Formules» a los Référentiels cuando se sepa cómo funcionan en Organigram (depende de P-003) | Claude | 2026-11-05 | abierto |
