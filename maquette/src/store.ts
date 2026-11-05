@@ -3,7 +3,8 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { calculerCompletude } from './data/dossier'
 import { construireAnnee, PERSONNES } from './data/seed'
 import { getRole } from './roles'
-import type { Contrat, DocumentId, EvenementContrat, InfosPersonnelles, Personne, Poste, RoleId, StatutContrat } from './types'
+import { envoyer, pieceManquante, SYSTEMES, systemesPour, transmissionsInitiales } from './transmissions'
+import type { Contrat, DocumentId, EvenementContrat, InfosPersonnelles, Personne, Poste, RoleId, StatutContrat, Transmission } from './types'
 import { notifier } from './ui-store'
 import type { ActionContrat } from './workflow'
 
@@ -26,6 +27,7 @@ interface DemoState {
   postes: Poste[]
   personnes: Personne[]
   contrats: Contrat[]
+  transmissions: Transmission[]
   setRole: (r: RoleId) => void
   setAnnee: (a: number) => void
   affecter: (posteId: string, personneId: string | null) => void
@@ -37,6 +39,7 @@ interface DemoState {
   deposerDocument: (personneId: string, doc: DocumentId, fichier: string | null) => void
   proposer: (p: Proposition) => string
   agir: (contratId: string, action: ActionContrat, commentaire?: string, modifs?: Partial<Proposition>) => void
+  renvoyerTransmission: (id: string) => void
   reinitialiser: () => void
 }
 
@@ -51,6 +54,7 @@ const initial = () => {
     postes,
     personnes: PERSONNES,
     contrats,
+    transmissions: transmissionsInitiales(postes, contrats, PERSONNES),
   }
 }
 
@@ -159,6 +163,7 @@ export const useDemo = create<DemoState>()(
           let statut: StatutContrat = c.statut
           let message = ''
           let detail: string | undefined
+          let nouvelles: Transmission[] = []
           const d = aujourdhui()
           switch (action) {
             case 'valider_compta':
@@ -200,8 +205,22 @@ export const useDemo = create<DemoState>()(
             case 'signer_collaborateur':
               statut = 'actif'
               ev.push({ date: d, auteur: qui, action: 'Signé par le collaborateur', statut })
-              ev.push({ date: d, auteur: 'Silae', action: 'Salarié et contrat transmis à la paie' })
-              ev.push({ date: d, auteur: 'POSI', action: 'Demande d’accréditation transmise' })
+              {
+                const poste = s.postes.find((p) => p.id === c.posteId)!
+                const pers = s.personnes.find((p) => p.id === c.personneId)!
+                nouvelles = systemesPour(poste).map((sys) => envoyer(sys, poste, pers, c.id, d, 'Envoi automatique'))
+                for (const t of nouvelles)
+                  ev.push({
+                    date: d,
+                    auteur: SYSTEMES[t.systeme].nom,
+                    action:
+                      t.statut === 'erreur'
+                        ? 'Envoi rejeté · dossier incomplet'
+                        : t.systeme === 'silae'
+                          ? 'Salarié et contrat transmis à la paie'
+                          : 'Demande d’accréditation transmise',
+                  })
+              }
               message = 'Contrat signé'
               detail = 'Merci ! Votre contrat signé est disponible dans « Mes contrats ».'
               break
@@ -211,12 +230,46 @@ export const useDemo = create<DemoState>()(
               x.id === contratId ? { ...x, ...(modifs ?? {}), statut, historique: [...x.historique, ...ev] } : x,
             ),
             postes: statut === 'refuse' ? s.postes.map((p) => (p.id === c.posteId ? { ...p, personneId: null } : p)) : s.postes,
+            transmissions: [...nouvelles, ...s.transmissions],
           })
           notifier(message, detail)
+        },
+        renvoyerTransmission: (id) => {
+          const s = get()
+          const t = s.transmissions.find((x) => x.id === id)
+          const pers = s.personnes.find((p) => p.id === t?.personneId)
+          if (!t || !pers) return
+          const d = aujourdhui()
+          // Erreur technique : corrigée côté paramétrage, l’envoi passe. Dossier : on revérifie la pièce.
+          const manque = t.cause === 'technique' ? null : pieceManquante(t.systeme, pers)
+          const ok = !manque
+          const message = manque ? `${SYSTEMES[t.systeme].nom} a rejeté l’envoi : ${manque.libelle.toLowerCase()} toujours manquant·e.` : undefined
+          set({
+            transmissions: s.transmissions.map((x) =>
+              x.id === id
+                ? {
+                    ...x,
+                    statut: ok ? 'envoye' : 'erreur',
+                    message: ok ? undefined : message,
+                    cause: ok ? undefined : x.cause,
+                    tentatives: [...x.tentatives, { date: d, auteur: auteur(), resultat: ok ? 'ok' : 'erreur', message }],
+                  }
+                : x,
+            ),
+            contrats: ok
+              ? s.contrats.map((c) =>
+                  c.id === t.contratId
+                    ? { ...c, historique: [...c.historique, { date: d, auteur: SYSTEMES[t.systeme].nom, action: `Envoi accepté après relance (${t.objet})` }] }
+                    : c,
+                )
+              : s.contrats,
+          })
+          if (ok) notifier(`Envoi ${SYSTEMES[t.systeme].nom} réussi`, `${pers.prenom} ${pers.nom} · ${t.objet}`)
+          else notifier('Envoi toujours en erreur', `${manque!.libelle} : à compléter dans le dossier de ${pers.prenom} ${pers.nom}`)
         },
         reinitialiser: () => set(initial()),
       }
     },
-    { name: 'organigramme-demo-v2', storage: createJSONStorage(() => localStorage) },
+    { name: 'organigramme-demo-v3', storage: createJSONStorage(() => localStorage) },
   ),
 )

@@ -130,3 +130,28 @@ export type RoleId =
   | 'lecteur_stagiaires'
   | 'admin'
   | 'collaborateur'
+
+export type Systeme = 'silae' | 'posi'
+export type StatutTransmission = 'envoye' | 'erreur'
+
+export interface TentativeTransmission {
+  date: string
+  auteur: string
+  resultat: 'ok' | 'erreur'
+  message?: string
+}
+
+/** Un envoi vers Silae (paie) ou POSI (accréditations), déclenché par la signature du contrat. */
+export interface Transmission {
+  id: string
+  contratId: string
+  personneId: string
+  systeme: Systeme
+  objet: string
+  date: string
+  statut: StatutTransmission
+  /** Pièce du dossier manquante (id de PIECES) ou « technique » */
+  cause?: string
+  message?: string
+  tentatives: TentativeTransmission[]
+}

@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, Network } from 'lucide-react'
+import { AlertTriangle, ArrowRight, ArrowUpRight, Network } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Shell } from '../components/Layout'
@@ -12,12 +12,14 @@ import { estATraiter } from '../workflow'
 const CIRCUIT: StatutContrat[] = ['soumis', 'valide_compta', 'signe_direction', 'a_corriger', 'actif']
 
 export function Dashboard() {
-  const { postes: tous, personnes, contrats, annee, role: roleId } = useDemo()
+  const { postes: tous, personnes, contrats, transmissions, annee, role: roleId } = useDemo()
   const role = getRole(roleId)
   const postes = useMemo(() => tous.filter((p) => p.annee === annee && dansPerimetre(role, p)), [tous, annee, role])
   const ids = new Set(postes.map((p) => p.id))
   const navigate = useNavigate()
   const duPerimetre = contrats.filter((c) => ids.has(c.posteId))
+  const contratIds = new Set(duPerimetre.map((c) => c.id))
+  const envoisEnErreur = transmissions.filter((t) => t.statut === 'erreur' && contratIds.has(t.contratId))
   const enCours = duPerimetre.filter((c) => !['actif', 'refuse'].includes(c.statut))
   const actionnables = enCours.filter((c) => estATraiter(role, c))
   // Sans action possible (lecture, responsable sans retour), on affiche le suivi de son périmètre.
@@ -57,6 +59,24 @@ export function Dashboard() {
         {role.services && ` · périmètre : ${role.services.map((s) => SERVICES.find((x) => x.id === s)?.nom).join(', ')}`}
         {role.populations && ' · périmètre : stagiaires de tous les services'}
       </p>
+
+      {envoisEnErreur.length > 0 && ['compta', 'admin'].includes(role.id) && (
+        <Link
+          to="/transmissions"
+          className="anim-fade mt-6 flex items-center gap-3 rounded-2xl border border-[#F0C9C9] bg-[#FDF3F3] px-5 py-3.5 text-[13px] text-[#9B2C2C] transition hover:bg-[#FBE3E3]"
+        >
+          <AlertTriangle size={17} />
+          <span className="flex-1">
+            <b>
+              {envoisEnErreur.length} envoi{envoisEnErreur.length > 1 ? 's' : ''} vers Silae / POSI en erreur
+            </b>{' '}
+            · {envoisEnErreur.map((t) => personnes.find((p) => p.id === t.personneId)?.prenom + ' ' + personnes.find((p) => p.id === t.personneId)?.nom).join(', ')}
+          </span>
+          <span className="flex items-center gap-1 font-medium">
+            Voir les transmissions <ArrowRight size={14} />
+          </span>
+        </Link>
+      )}
 
       <div className="mt-8 grid grid-cols-4 gap-4">
         {kpis.map((k, i) => (
